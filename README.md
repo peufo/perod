@@ -1,0 +1,2 @@
+# perod
+Period managment utilitary
