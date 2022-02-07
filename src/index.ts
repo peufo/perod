@@ -75,7 +75,11 @@ export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | 
 export function findFreeRanges (rangesOrPeriods: IRange[], limitRange?: IRange): IRange[]
 export function findFreeRanges (rangesOrPeriods: IPeriod[], limitPeriod?: IPeriod): IPeriod[]
 export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRangeOrPeriod?: IRange | IPeriod): IRange[] |IPeriod[] {
-  if (rangesOrPeriods.length === 0) return []
+  if (rangesOrPeriods.length === 0) {
+    if (limitRangeOrPeriod === undefined) return []
+    // @ts-expect-error
+    return limitRangeOrPeriod
+  }
 
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
 
