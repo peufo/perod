@@ -48,7 +48,6 @@ export function mergeRanges (rangesOrPeriods: IPeriod[]): IPeriod[]
 export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | IPeriod[] {
   if (rangesOrPeriods.length === 0) return []
 
-  // Date conversion
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
   const ranges = ensureIsRange(rangesOrPeriods)
 
