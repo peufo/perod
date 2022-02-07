@@ -33,6 +33,7 @@ test('merge two ranges', () => {
 
 test('merge all ranges', () => {
   expect(mergeRanges(ranges)).toEqual(allRangesMerged)
+  expect(mergeRanges([])).toEqual([])
 })
 
 test('find free ranges', () => {
@@ -47,4 +48,5 @@ test('find free ranges', () => {
     .toEqual([
       { start: 8, end: 12 }
     ])
+  expect(findFreeRanges([])).toEqual([])
 })

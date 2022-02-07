@@ -46,6 +46,8 @@ export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeri
 export function mergeRanges (rangesOrPeriods: IRange[]): IRange[]
 export function mergeRanges (rangesOrPeriods: IPeriod[]): IPeriod[]
 export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | IPeriod[] {
+  if (rangesOrPeriods.length === 0) return []
+
   // Date conversion
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
   const ranges = ensureIsRange(rangesOrPeriods)
@@ -74,6 +76,8 @@ export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | 
 export function findFreeRanges (rangesOrPeriods: IRange[], limitRange?: IRange): IRange[]
 export function findFreeRanges (rangesOrPeriods: IPeriod[], limitPeriod?: IPeriod): IPeriod[]
 export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRangeOrPeriod?: IRange | IPeriod): IRange[] |IPeriod[] {
+  if (rangesOrPeriods.length === 0) return []
+
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
 
   const ranges = mergeRanges(ensureIsRange(rangesOrPeriods))
