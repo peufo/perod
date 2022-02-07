@@ -9,7 +9,7 @@
     "dev": "jest --watch --preset ts-jest --env node",
     "test": "jest --preset ts-jest --env node",
     "build": "tsc",
-    "prepublish": "tsc"
+    "prepack": "tsc"
   },
   "repository": {
     "type": "git",
