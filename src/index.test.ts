@@ -1,4 +1,4 @@
-import type { IRange } from 'types'
+import type { IPeriod, IRange } from 'types'
 import { findFreeRanges, mergeTwoPeriod, mergeRanges } from './index'
 
 const ranges: IRange[] = [
@@ -13,11 +13,22 @@ const allRangesMerged: IRange[] = [
   { start: 21, end: 28 }
 ]
 
+const periods: IPeriod[] = [
+  { start: new Date('2000-01-01'), end: new Date('2000-01-08') },
+  { start: new Date('2000-01-04'), end: new Date('2000-01-12') },
+  { start: new Date('2000-01-12'), end: new Date('2000-01-19') },
+  { start: new Date('2000-01-21'), end: new Date('2000-01-28') }
+]
+
 test('merge two ranges', () => {
   expect(mergeTwoPeriod(ranges[0], ranges[1])).toEqual([{ start: 1, end: 12 }])
+  expect(mergeTwoPeriod(periods[0], periods[1])).toEqual([{ start: new Date('2000-01-01'), end: new Date('2000-01-12') }])
   expect(mergeTwoPeriod(ranges[1], ranges[0])).toEqual([{ start: 1, end: 12 }])
+  expect(mergeTwoPeriod(periods[1], periods[0])).toEqual([{ start: new Date('2000-01-01'), end: new Date('2000-01-12') }])
   expect(mergeTwoPeriod(ranges[1], ranges[2])).toEqual([{ start: 4, end: 19 }])
+  expect(mergeTwoPeriod(periods[1], periods[2])).toEqual([{ start: new Date('2000-01-04'), end: new Date('2000-01-19') }])
   expect(mergeTwoPeriod(ranges[0], ranges[2])).toEqual([ranges[0], ranges[2]])
+  expect(mergeTwoPeriod(periods[0], periods[2])).toEqual([periods[0], periods[2]])
 })
 
 test('merge all ranges', () => {

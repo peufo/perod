@@ -1,5 +1,5 @@
 import type { IRange, IPeriod } from 'types'
-import { rangeIsPeriod, ensureIsRange, ensureIsPeriod } from './utils'
+import { rangeIsPeriod, ensureIsRange, rangeToPeriod } from './utils'
 
 /**
  * Merge two ranges like that
@@ -19,7 +19,11 @@ export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeri
   const [first, second] = a.start < b.start ? [a, b] : [b, a]
   const left = first.start <= second.start && second.start <= first.end
   const right = second.start <= first.end && first.end <= second.end
-  if (!left && !right) return [first, second]
+  if (!left && !right) {
+    return isPeriod
+      ? rangeToPeriod([first, second])
+      : [first, second]
+  }
 
   const newRange = {
     start: first.start,
@@ -27,8 +31,9 @@ export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeri
   }
 
   // Date conversion
-  if (isPeriod) return ensureIsPeriod([newRange])
-  return [newRange]
+  return isPeriod
+    ? rangeToPeriod([newRange])
+    : [newRange]
 }
 
 /**
@@ -56,7 +61,7 @@ export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | 
       index--
     }
   }
-  if (isPeriod) return ensureIsPeriod(ranges)
+  if (isPeriod) return rangeToPeriod(ranges)
   return ranges
 }
 
@@ -100,6 +105,5 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
       })
     }
   }
-
-  return isPeriod ? ensureIsPeriod(freeRanges) : freeRanges
+  return isPeriod ? rangeToPeriod(freeRanges) : freeRanges
 }
