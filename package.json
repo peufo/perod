@@ -6,10 +6,10 @@
   "types": "dist/index.d.ts",
   
   "scripts": {
-    "dev": "npm run test",
+    "dev": "jest --watch --preset ts-jest --env node",
+    "test": "jest --preset ts-jest --env node",
     "build": "tsc",
-    "prepublish": "tsc",
-    "test": "jest --watch --preset ts-jest --env node"
+    "prepublish": "tsc"
   },
   "repository": {
     "type": "git",
