@@ -1,4 +1,5 @@
-import { IRange, merge, mergeAll } from '.'
+import type { IRange } from 'types'
+import { merge, mergeAll } from '.'
 
 const ranges: IRange[] = [
   { start: 1, end: 8 },

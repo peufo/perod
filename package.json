@@ -1,11 +1,14 @@
 {
   "name": "perod",
-  "version": "1.0.0",
-  "description": "Period managment utilitary",
+  "version": "1.0.1",
+  "description": "Periods and ranges managment utilitary",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  
   "scripts": {
     "dev": "npm run test",
     "build": "tsc",
+    "prepublish": "tsc",
     "test": "jest --watch --preset ts-jest --env node"
   },
   "repository": {
