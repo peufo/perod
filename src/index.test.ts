@@ -1,5 +1,5 @@
 import type { IRange } from 'types'
-import { merge, mergeAll } from '.'
+import { findFreeRanges, mergeTwoPeriod, mergeRanges } from './index'
 
 const ranges: IRange[] = [
   { start: 1, end: 8 },
@@ -14,12 +14,26 @@ const allRangesMerged: IRange[] = [
 ]
 
 test('merge two ranges', () => {
-  expect(merge(ranges[0], ranges[1])).toEqual([{ start: 1, end: 12 }])
-  expect(merge(ranges[1], ranges[0])).toEqual([{ start: 1, end: 12 }])
-  expect(merge(ranges[1], ranges[2])).toEqual([{ start: 4, end: 19 }])
-  expect(merge(ranges[0], ranges[2])).toEqual([ranges[0], ranges[2]])
+  expect(mergeTwoPeriod(ranges[0], ranges[1])).toEqual([{ start: 1, end: 12 }])
+  expect(mergeTwoPeriod(ranges[1], ranges[0])).toEqual([{ start: 1, end: 12 }])
+  expect(mergeTwoPeriod(ranges[1], ranges[2])).toEqual([{ start: 4, end: 19 }])
+  expect(mergeTwoPeriod(ranges[0], ranges[2])).toEqual([ranges[0], ranges[2]])
 })
 
 test('merge all ranges', () => {
-  expect(mergeAll(ranges)).toEqual(allRangesMerged)
+  expect(mergeRanges(ranges)).toEqual(allRangesMerged)
+})
+
+test('find free ranges', () => {
+  expect(findFreeRanges(ranges)).toEqual([{ start: 19, end: 21 }])
+  expect(findFreeRanges(ranges, { start: 0, end: 30 }))
+    .toEqual([
+      { start: 0, end: 1 },
+      { start: 19, end: 21 },
+      { start: 28, end: 30 }
+    ])
+  expect(findFreeRanges([ranges[0], ranges[2]]))
+    .toEqual([
+      { start: 8, end: 12 }
+    ])
 })

@@ -8,9 +8,9 @@ import { rangeIsPeriod, ensureIsRange, ensureIsPeriod } from './utils'
  * _____________
  *  [0000000000]
  */
-export function merge (rangeA: IPeriod, rangeB: IPeriod): IPeriod[]
-export function merge (rangeA: IRange, rangeB: IRange): IRange[]
-export function merge (rangeA: IRange | IPeriod, rangeB: IRange | IPeriod): IRange[] | IPeriod[] {
+export function mergeTwoPeriod (rangeA: IPeriod, rangeB: IPeriod): IPeriod[]
+export function mergeTwoPeriod (rangeA: IRange, rangeB: IRange): IRange[]
+export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeriod): IRange[] | IPeriod[] {
   // Date conversion
   const isPeriod = rangeIsPeriod(rangeA)
   const [a, b] = ensureIsRange([rangeA, rangeB])
@@ -35,27 +35,67 @@ export function merge (rangeA: IRange | IPeriod, rangeB: IRange | IPeriod): IRan
  * Merge an array of ranges like that
  *  [000000]   [222222]
  *     [1111111]        [333333]
- * ____________________________
+ * _____________________________
  *  [00000000000000000] [111111]
  */
-export function mergeAll (ranges: IPeriod[]): IPeriod[]
-export function mergeAll (ranges: IRange[]): IRange[]
-export function mergeAll (ranges: IRange[] | IPeriod[]): IRange[] | IPeriod[] {
+export function mergeRanges (periods: IPeriod[]): IPeriod[]
+export function mergeRanges (ranges: IRange[]): IRange[]
+export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | IPeriod[] {
   // Date conversion
-  const isPeriod = rangeIsPeriod(ranges[0])
-  const _ranges = ensureIsRange(ranges)
+  const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
+  const ranges = ensureIsRange(rangesOrPeriods)
 
-  _ranges.sort((a, b) => a.start - b.start)
+  ranges.sort((a, b) => a.start - b.start)
   let result: IRange[] = []
 
-  for (let index = 0; index < _ranges.length - 1; index++) {
-    result = merge(_ranges[index], _ranges[index + 1])
+  for (let index = 0; index < ranges.length - 1; index++) {
+    result = mergeTwoPeriod(ranges[index], ranges[index + 1])
     if (result.length === 1) {
-      _ranges.splice(index + 1, 1)
-      _ranges[index] = result[0]
+      ranges.splice(index + 1, 1)
+      ranges[index] = result[0]
       index--
     }
   }
-  if (isPeriod) return ensureIsPeriod(_ranges)
-  return _ranges
+  if (isPeriod) return ensureIsPeriod(ranges)
+  return ranges
+}
+
+/**
+ * Find all free ranges in a limit search zone
+ *  [000000]   [111111] [222222]
+ * _____________________________
+ *         [000]      [1]
+ */
+export function findFreeRanges (ranges: IRange[], limitRange?: IRange): IRange[] {
+  ranges = mergeRanges(ranges)
+
+  const freeRanges = []
+
+  for (let index = 0; index < ranges.length - 1; index++) {
+    freeRanges.push({
+      start: ranges[index].end,
+      end: ranges[index + 1].start
+    })
+  }
+
+  if (limitRange !== undefined) {
+    // Find first free range
+    if (limitRange.start < ranges[0].start) {
+      freeRanges.unshift({
+        start: limitRange.start,
+        end: ranges[0].start
+      })
+    }
+
+    // Find last free range
+    const lastEnd = Math.max(...ranges.map(r => r.end))
+    if (lastEnd < limitRange.end) {
+      freeRanges.push({
+        start: lastEnd,
+        end: limitRange.end
+      })
+    }
+  }
+
+  return freeRanges
 }
