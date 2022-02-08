@@ -87,10 +87,17 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
   const freeRanges: IRange[] = []
 
   for (let index = 0; index < ranges.length - 1; index++) {
-    freeRanges.push({
+    const freeRange = {
       start: ranges[index].end,
       end: ranges[index + 1].start
-    })
+    }
+    if (limitRangeOrPeriod === undefined) {
+      freeRanges.push(freeRange)
+    } else if (limitRangeOrPeriod.start < freeRange.end && freeRange.start < limitRangeOrPeriod.end) {
+      if (freeRange.start < limitRangeOrPeriod.start) freeRange.start = limitRangeOrPeriod.start
+      if (freeRange.end > limitRangeOrPeriod.end) freeRange.end = limitRangeOrPeriod.end
+      freeRanges.push(freeRange)
+    }
   }
 
   if (limitRangeOrPeriod !== undefined) {
