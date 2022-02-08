@@ -93,7 +93,7 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
       start: ranges[index].end,
       end: ranges[index + 1].start
     }
-    if (limitRange !== false) {
+    if (limitRange === false) {
       freeRanges.push(freeRange)
     } else if (limitRange.start < freeRange.end && freeRange.start < limitRange.end) {
       if (freeRange.start < limitRange.start) freeRange.start = limitRange.start
