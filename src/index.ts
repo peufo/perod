@@ -105,7 +105,7 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
   if (limitRange !== false) {
     
     // Find first free range
-    if (limitRange.start < ranges[0].start) {
+    if (limitRange.start < ranges[0].start && ranges[0].start < limitRange.end) {
       freeRanges.unshift({
         start: limitRange.start,
         end: ranges[0].start
@@ -114,7 +114,7 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
 
     // Find last free range
     const lastEnd = Math.max(...ranges.map(r => r.end))
-    if (lastEnd < limitRange.end) {
+    if (limitRange.start < lastEnd && lastEnd < limitRange.end) {
       freeRanges.push({
         start: lastEnd,
         end: limitRange.end
