@@ -77,6 +77,7 @@ export function findFreeRanges (rangesOrPeriods: IPeriod[], limitPeriod?: IPerio
 export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRangeOrPeriod?: IRange | IPeriod): IRange[] |IPeriod[] {
   if (rangesOrPeriods.length === 0) {
     if (limitRangeOrPeriod === undefined) return []
+    // @ts-ignore
     return [limitRangeOrPeriod]
   }
 
