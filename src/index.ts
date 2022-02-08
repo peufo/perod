@@ -81,6 +81,8 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
     return [limitRangeOrPeriod]
   }
 
+  const limitRange = limitRangeOrPeriod !== undefined && ensureIsRange(limitRangeOrPeriod)
+
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
 
   const ranges = mergeRanges(ensureIsRange(rangesOrPeriods))
@@ -91,17 +93,17 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
       start: ranges[index].end,
       end: ranges[index + 1].start
     }
-    if (limitRangeOrPeriod === undefined) {
+    if (limitRange !== false) {
       freeRanges.push(freeRange)
-    } else if (limitRangeOrPeriod.start < freeRange.end && freeRange.start < limitRangeOrPeriod.end) {
-      if (freeRange.start < limitRangeOrPeriod.start) freeRange.start = limitRangeOrPeriod.start
-      if (freeRange.end > limitRangeOrPeriod.end) freeRange.end = limitRangeOrPeriod.end
+    } else if (limitRange.start < freeRange.end && freeRange.start < limitRange.end) {
+      if (freeRange.start < limitRange.start) freeRange.start = limitRange.start
+      if (freeRange.end > limitRange.end) freeRange.end = limitRange.end
       freeRanges.push(freeRange)
     }
   }
 
-  if (limitRangeOrPeriod !== undefined) {
-    const limitRange = ensureIsRange(limitRangeOrPeriod)
+  if (limitRange !== false) {
+    
     // Find first free range
     if (limitRange.start < ranges[0].start) {
       freeRanges.unshift({
