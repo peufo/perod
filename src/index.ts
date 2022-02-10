@@ -104,7 +104,7 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
 
   if (limitRange !== false) {
     
-    // Find first free range
+    // Find collapsed free range before
     if (limitRange.start < ranges[0].start && ranges[0].start < limitRange.end) {
       freeRanges.unshift({
         start: limitRange.start,
@@ -112,7 +112,7 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
       })
     }
 
-    // Find last free range
+    // Find collapsed free range after
     const lastEnd = Math.max(...ranges.map(r => r.end))
     if (limitRange.start < lastEnd && lastEnd < limitRange.end) {
       freeRanges.push({
@@ -120,9 +120,18 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
         end: limitRange.end
       })
     }
-  }
 
-  if (ranges.length === 0 && limitRange !== false) freeRanges.push(limitRange)
+    // Find free range before
+    if (limitRange.end < ranges[0].start) {
+      freeRanges.unshift(limitRange)
+    }
+
+    // Find free range before
+    if (limitRange.start > lastEnd) {
+      freeRanges.push(limitRange)
+    }
+
+  }
 
   return isPeriod ? rangeToPeriod(freeRanges) : freeRanges
 }

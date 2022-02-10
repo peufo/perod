@@ -43,4 +43,5 @@ test('find free ranges', () => {
   expect(findFreeRanges([ranges[0], ranges[2]])).toEqual([{ start: 8, end: 12 }])
   expect(findFreeRanges([], ranges[2])).toEqual([ranges[2]])
   expect(findFreeRanges([ranges[0]], ranges[2])).toEqual([ranges[2]])
+  expect(findFreeRanges([ranges[2]], ranges[0])).toEqual([ranges[0]])
 })
