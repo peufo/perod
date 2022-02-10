@@ -121,5 +121,8 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
       })
     }
   }
+
+  if (ranges.length === 0 && limitRange !== false) freeRanges.push(limitRange)
+
   return isPeriod ? rangeToPeriod(freeRanges) : freeRanges
 }
