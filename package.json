@@ -1,6 +1,6 @@
 {
   "name": "perod",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Periods and ranges managment utilitary",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
