@@ -1,4 +1,6 @@
-# Period management utility working with numbers and dates
+# perod
+
+Peiod management utility working with numbers and dates
 
 ```js
 import { findFreeRanges, mergeRanges } from 'perod'
