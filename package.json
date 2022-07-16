@@ -1,10 +1,9 @@
 {
   "name": "perod",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Periods and ranges managment utilitary",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  
   "scripts": {
     "dev": "jest --watch --preset ts-jest --env node",
     "test": "jest --preset ts-jest --env node",
