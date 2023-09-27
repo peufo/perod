@@ -77,4 +77,6 @@ test('is free range', () => {
   expect(isFreeRange({ start: 0, end: 0 }, ranges)).toEqual(true)
   expect(isFreeRange({ start: 28, end: 40 }, ranges)).toEqual(true)
   expect(isFreeRange({ start: 30, end: 40 }, ranges)).toEqual(true)
+  expect(isFreeRange({ start: 2, end: 3 }, ranges)).toEqual(false)
+  expect(isFreeRange({ start: 20, end: 30 }, ranges)).toEqual(false)
 })

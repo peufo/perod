@@ -161,9 +161,7 @@ export function isFreeRange(
   const ranges = ensureIsRange(rangesOrPeriods)
 
   const overlay = ranges.filter(
-    ({ start, end }) =>
-      (start < range.start && range.start < end) ||
-      (start < range.end && range.end < end)
+    ({ start, end }) => start < range.end && end > range.start
   )
 
   return !overlay.length
