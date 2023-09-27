@@ -8,9 +8,12 @@ import { rangeIsPeriod, ensureIsRange, rangeToPeriod } from './utils'
  * _____________
  *  [0000000000]
  */
-export function mergeTwoPeriod (rangeA: IRange, rangeB: IRange): IRange[]
-export function mergeTwoPeriod (rangeA: IPeriod, rangeB: IPeriod): IPeriod[]
-export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeriod): IRange[] | IPeriod[] {
+export function mergeTwoPeriod(rangeA: IRange, rangeB: IRange): IRange[]
+export function mergeTwoPeriod(rangeA: IPeriod, rangeB: IPeriod): IPeriod[]
+export function mergeTwoPeriod(
+  rangeA: IRange | IPeriod,
+  rangeB: IRange | IPeriod
+): IRange[] | IPeriod[] {
   // Date conversion
   const isPeriod = rangeIsPeriod(rangeA)
   const [a, b] = ensureIsRange([rangeA, rangeB])
@@ -20,20 +23,16 @@ export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeri
   const left = first.start <= second.start && second.start <= first.end
   const right = second.start <= first.end && first.end <= second.end
   if (!left && !right) {
-    return isPeriod
-      ? rangeToPeriod([first, second])
-      : [first, second]
+    return isPeriod ? rangeToPeriod([first, second]) : [first, second]
   }
 
   const newRange = {
     start: first.start,
-    end: Math.max(...[a.end, b.end])
+    end: Math.max(...[a.end, b.end]),
   }
 
   // Date conversion
-  return isPeriod
-    ? rangeToPeriod([newRange])
-    : [newRange]
+  return isPeriod ? rangeToPeriod([newRange]) : [newRange]
 }
 
 /**
@@ -43,9 +42,11 @@ export function mergeTwoPeriod (rangeA: IRange | IPeriod, rangeB: IRange | IPeri
  * _____________________________
  *  [00000000000000000] [111111]
  */
-export function mergeRanges (rangesOrPeriods: IRange[]): IRange[]
-export function mergeRanges (rangesOrPeriods: IPeriod[]): IPeriod[]
-export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | IPeriod[] {
+export function mergeRanges(rangesOrPeriods: IRange[]): IRange[]
+export function mergeRanges(rangesOrPeriods: IPeriod[]): IPeriod[]
+export function mergeRanges(
+  rangesOrPeriods: IRange[] | IPeriod[]
+): IRange[] | IPeriod[] {
   if (rangesOrPeriods.length === 0) return []
 
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
@@ -72,16 +73,26 @@ export function mergeRanges (rangesOrPeriods: IRange[] | IPeriod[]): IRange[] | 
  * _____________________________
  *         [000]      [1]
  */
-export function findFreeRanges (rangesOrPeriods: IRange[], limitRange?: IRange): IRange[]
-export function findFreeRanges (rangesOrPeriods: IPeriod[], limitPeriod?: IPeriod): IPeriod[]
-export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRangeOrPeriod?: IRange | IPeriod): IRange[] |IPeriod[] {
+export function findFreeRanges(
+  rangesOrPeriods: IRange[],
+  limitRange?: IRange
+): IRange[]
+export function findFreeRanges(
+  rangesOrPeriods: IPeriod[],
+  limitPeriod?: IPeriod
+): IPeriod[]
+export function findFreeRanges(
+  rangesOrPeriods: IRange[] | IPeriod[],
+  limitRangeOrPeriod?: IRange | IPeriod
+): IRange[] | IPeriod[] {
   if (rangesOrPeriods.length === 0) {
     if (limitRangeOrPeriod === undefined) return []
     // @ts-ignore
     return [limitRangeOrPeriod]
   }
 
-  const limitRange = limitRangeOrPeriod !== undefined && ensureIsRange(limitRangeOrPeriod)
+  const limitRange =
+    limitRangeOrPeriod !== undefined && ensureIsRange(limitRangeOrPeriod)
 
   const isPeriod = rangeIsPeriod(rangesOrPeriods[0])
 
@@ -91,11 +102,14 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
   for (let index = 0; index < ranges.length - 1; index++) {
     const freeRange = {
       start: ranges[index].end,
-      end: ranges[index + 1].start
+      end: ranges[index + 1].start,
     }
     if (limitRange === false) {
       freeRanges.push(freeRange)
-    } else if (limitRange.start < freeRange.end && freeRange.start < limitRange.end) {
+    } else if (
+      limitRange.start < freeRange.end &&
+      freeRange.start < limitRange.end
+    ) {
       if (freeRange.start < limitRange.start) freeRange.start = limitRange.start
       if (freeRange.end > limitRange.end) freeRange.end = limitRange.end
       freeRanges.push(freeRange)
@@ -103,21 +117,23 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
   }
 
   if (limitRange !== false) {
-    
     // Find collapsed free range before
-    if (limitRange.start < ranges[0].start && ranges[0].start < limitRange.end) {
+    if (
+      limitRange.start < ranges[0].start &&
+      ranges[0].start < limitRange.end
+    ) {
       freeRanges.unshift({
         start: limitRange.start,
-        end: ranges[0].start
+        end: ranges[0].start,
       })
     }
 
     // Find collapsed free range after
-    const lastEnd = Math.max(...ranges.map(r => r.end))
+    const lastEnd = Math.max(...ranges.map((r) => r.end))
     if (limitRange.start < lastEnd && lastEnd < limitRange.end) {
       freeRanges.push({
         start: lastEnd,
-        end: limitRange.end
+        end: limitRange.end,
       })
     }
 
@@ -130,8 +146,25 @@ export function findFreeRanges (rangesOrPeriods: IRange[] | IPeriod[], limitRang
     if (limitRange.start > lastEnd) {
       freeRanges.push(limitRange)
     }
-
   }
 
   return isPeriod ? rangeToPeriod(freeRanges) : freeRanges
+}
+
+export function isFreeRange(range: IRange, ranges: IRange[]): boolean
+export function isFreeRange(range: IPeriod, ranges: IPeriod[]): boolean
+export function isFreeRange(
+  rangeOrPeriod: IRange | IPeriod,
+  rangesOrPeriods: IRange[] | IPeriod[]
+): boolean {
+  const range = ensureIsRange(rangeOrPeriod)
+  const ranges = ensureIsRange(rangesOrPeriods)
+
+  const overlay = ranges.filter(
+    ({ start, end }) =>
+      (start < range.start && range.start < end) ||
+      (start < range.end && range.end < end)
+  )
+
+  return !overlay.length
 }
