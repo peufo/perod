@@ -1,5 +1,10 @@
 import type { IRange, IPeriod } from 'types'
-import { rangeIsPeriod, ensureIsRange, rangeToPeriod } from './utils'
+import {
+  rangeIsPeriod,
+  ensureIsRange,
+  rangeToPeriod,
+  compareAll,
+} from './utils'
 
 /**
  * Merge two ranges like that
@@ -18,17 +23,10 @@ export function mergeTwoPeriod(
   const isPeriod = rangeIsPeriod(rangeA)
   const [a, b] = ensureIsRange([rangeA, rangeB])
 
-  // Logic
-  const [first, second] = a.start < b.start ? [a, b] : [b, a]
-  const left = first.start <= second.start && second.start <= first.end
-  const right = second.start <= first.end && first.end <= second.end
-  if (!left && !right) {
-    return isPeriod ? rangeToPeriod([first, second]) : [first, second]
-  }
-
+  if (!isOverlapOrStick(a, b)) return isPeriod ? rangeToPeriod([a, b]) : [a, b]
   const newRange = {
-    start: first.start,
-    end: Math.max(...[a.end, b.end]),
+    start: Math.min(a.start, b.start),
+    end: Math.max(a.end, b.end),
   }
 
   // Date conversion
@@ -151,6 +149,38 @@ export function findFreeRanges(
   return isPeriod ? rangeToPeriod(freeRanges) : freeRanges
 }
 
+/**
+ * Return true if two range is overloaped or sticked
+ */
+export function isRangesOverlapOrStick(
+  ranges: IRange[],
+  tolerance?: number
+): boolean
+export function isRangesOverlapOrStick(
+  periods: IPeriod[],
+  tolerance?: number
+): boolean
+export function isRangesOverlapOrStick(
+  rangesOrPeriods: IRange[] | IPeriod[],
+  tolerance = 0
+): boolean {
+  const ranges = ensureIsRange(rangesOrPeriods)
+  return compareAll(ranges, (a, b) => isOverlapOrStick(a, b, tolerance))
+}
+
+/**
+ * Return true if two range is overloap
+ */
+export function isRangesOverlap(ranges: IRange[], tolerance?: number): boolean
+export function isRangesOverlap(periods: IPeriod[], tolerance?: number): boolean
+export function isRangesOverlap(
+  rangesOrPeriods: IRange[] | IPeriod[],
+  tolerance = 0
+): boolean {
+  const ranges = ensureIsRange(rangesOrPeriods)
+  return compareAll(ranges, (a, b) => isOverlap(a, b, tolerance))
+}
+
 export function isFreeRange(range: IRange, ranges: IRange[]): boolean
 export function isFreeRange(range: IPeriod, ranges: IPeriod[]): boolean
 export function isFreeRange(
@@ -159,10 +189,18 @@ export function isFreeRange(
 ): boolean {
   const range = ensureIsRange(rangeOrPeriod)
   const ranges = ensureIsRange(rangesOrPeriods)
+  const overlap = ranges.filter((rangeB) => isOverlap(range, rangeB))
+  return !overlap.length
+}
 
-  const overlay = ranges.filter(
-    ({ start, end }) => start < range.end && end > range.start
-  )
+export function isOverlapOrStick(a: IRange, b: IRange, tolerance = 0): boolean {
+  const [first, second] = a.start < b.start ? [a, b] : [b, a]
+  const overlap = first.end - second.start
+  return overlap >= tolerance
+}
 
-  return !overlay.length
+export function isOverlap(a: IRange, b: IRange, tolerance = 0): boolean {
+  const [first, second] = a.start < b.start ? [a, b] : [b, a]
+  const overlap = first.end - second.start
+  return overlap > tolerance
 }

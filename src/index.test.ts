@@ -4,7 +4,10 @@ import {
   mergeTwoPeriod,
   mergeRanges,
   isFreeRange,
+  isRangesOverlapOrStick,
+  isRangesOverlap,
 } from './index'
+import { compareAll } from './utils'
 
 const ranges: IRange[] = [
   { start: 1, end: 8 },
@@ -24,6 +27,55 @@ const periods: IPeriod[] = [
   { start: new Date('2000-01-12'), end: new Date('2000-01-19') },
   { start: new Date('2000-01-21'), end: new Date('2000-01-28') },
 ]
+
+test('compare all items', () => {
+  expect(compareAll([0, 1, 2, 3], (a, b) => a === b)).toEqual(false)
+  expect(compareAll([0, 1, 2, 1], (a, b) => a === b)).toEqual(true)
+})
+
+describe('Ranges overlap logique', () => {
+  test('Overlap', () => {
+    expect(isRangesOverlap(ranges)).toEqual(true)
+    expect(isRangesOverlap([ranges[1], ranges[2]])).toEqual(false)
+    expect(isRangesOverlap([ranges[2], ranges[1]])).toEqual(false)
+    expect(isRangesOverlap([ranges[1], ranges[3]])).toEqual(false)
+    expect(isRangesOverlap([ranges[3], ranges[1]])).toEqual(false)
+  })
+
+  test('Overlap with tolerance', () => {
+    expect(isRangesOverlap([ranges[0], ranges[1]], 0)).toEqual(true)
+    expect(isRangesOverlap([ranges[1], ranges[0]], 0)).toEqual(true)
+    expect(isRangesOverlap([ranges[0], ranges[1]], 3)).toEqual(true)
+    expect(isRangesOverlap([ranges[1], ranges[0]], 3)).toEqual(true)
+    expect(isRangesOverlap([ranges[0], ranges[1]], 4)).toEqual(false)
+    expect(isRangesOverlap([ranges[1], ranges[0]], 4)).toEqual(false)
+    expect(isRangesOverlap([ranges[2], ranges[3]], -2)).toEqual(false)
+    expect(isRangesOverlap([ranges[3], ranges[2]], -2)).toEqual(false)
+    expect(isRangesOverlap([ranges[2], ranges[3]], -3)).toEqual(true)
+    expect(isRangesOverlap([ranges[3], ranges[2]], -3)).toEqual(true)
+  })
+
+  test('Overlap or sticks', () => {
+    expect(isRangesOverlapOrStick(ranges)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[1], ranges[2]])).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[2], ranges[1]])).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[1], ranges[3]])).toEqual(false)
+    expect(isRangesOverlapOrStick([ranges[3], ranges[1]])).toEqual(false)
+  })
+
+  test('Overlap or sticks with tolerance', () => {
+    expect(isRangesOverlapOrStick([ranges[0], ranges[1]], 0)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[1], ranges[0]], 0)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[0], ranges[1]], 4)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[1], ranges[0]], 4)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[0], ranges[1]], 5)).toEqual(false)
+    expect(isRangesOverlapOrStick([ranges[1], ranges[0]], 5)).toEqual(false)
+    expect(isRangesOverlapOrStick([ranges[2], ranges[3]], -1)).toEqual(false)
+    expect(isRangesOverlapOrStick([ranges[3], ranges[2]], -1)).toEqual(false)
+    expect(isRangesOverlapOrStick([ranges[2], ranges[3]], -2)).toEqual(true)
+    expect(isRangesOverlapOrStick([ranges[3], ranges[2]], -2)).toEqual(true)
+  })
+})
 
 test('merge two ranges', () => {
   expect(mergeTwoPeriod(ranges[0], ranges[1])).toEqual([{ start: 1, end: 12 }])
