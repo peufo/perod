@@ -181,15 +181,24 @@ export function isRangesOverlap(
   return compareAll(ranges, (a, b) => isOverlap(a, b, tolerance))
 }
 
-export function isFreeRange(range: IRange, ranges: IRange[]): boolean
-export function isFreeRange(range: IPeriod, ranges: IPeriod[]): boolean
+export function isFreeRange(
+  range: IRange,
+  ranges: IRange[],
+  tolerance?: number
+): boolean
+export function isFreeRange(
+  range: IPeriod,
+  ranges: IPeriod[],
+  tolerance?: number
+): boolean
 export function isFreeRange(
   rangeOrPeriod: IRange | IPeriod,
-  rangesOrPeriods: IRange[] | IPeriod[]
+  rangesOrPeriods: IRange[] | IPeriod[],
+  tolerance = 0
 ): boolean {
   const range = ensureIsRange(rangeOrPeriod)
   const ranges = ensureIsRange(rangesOrPeriods)
-  const overlap = ranges.filter((rangeB) => isOverlap(range, rangeB))
+  const overlap = ranges.filter((rangeB) => isOverlap(range, rangeB, tolerance))
   return !overlap.length
 }
 

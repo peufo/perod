@@ -127,8 +127,11 @@ test('find free ranges', () => {
 
 test('is free range', () => {
   expect(isFreeRange({ start: 19, end: 21 }, ranges)).toEqual(true)
+  expect(isFreeRange({ start: 19, end: 21 }, ranges, -1)).toEqual(false)
   expect(isFreeRange({ start: 18, end: 21 }, ranges)).toEqual(false)
+  expect(isFreeRange({ start: 18, end: 21 }, ranges, 1)).toEqual(true)
   expect(isFreeRange({ start: 19, end: 22 }, ranges)).toEqual(false)
+  expect(isFreeRange({ start: 19, end: 22 }, ranges, 1)).toEqual(true)
   expect(isFreeRange({ start: 0, end: 1 }, ranges)).toEqual(true)
   expect(isFreeRange({ start: 0, end: 0 }, ranges)).toEqual(true)
   expect(isFreeRange({ start: 28, end: 40 }, ranges)).toEqual(true)
