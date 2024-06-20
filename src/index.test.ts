@@ -43,6 +43,8 @@ describe('Ranges overlap logique', () => {
   })
 
   test('Overlap with tolerance', () => {
+    expect(isRangesOverlap(ranges, 3)).toEqual(true)
+    expect(isRangesOverlap(ranges, 4)).toEqual(false)
     expect(isRangesOverlap([ranges[0], ranges[1]], 0)).toEqual(true)
     expect(isRangesOverlap([ranges[1], ranges[0]], 0)).toEqual(true)
     expect(isRangesOverlap([ranges[0], ranges[1]], 3)).toEqual(true)
@@ -64,6 +66,8 @@ describe('Ranges overlap logique', () => {
   })
 
   test('Overlap or sticks with tolerance', () => {
+    expect(isRangesOverlapOrStick(ranges, 4)).toEqual(true)
+    expect(isRangesOverlapOrStick(ranges, 5)).toEqual(false)
     expect(isRangesOverlapOrStick([ranges[0], ranges[1]], 0)).toEqual(true)
     expect(isRangesOverlapOrStick([ranges[1], ranges[0]], 0)).toEqual(true)
     expect(isRangesOverlapOrStick([ranges[0], ranges[1]], 4)).toEqual(true)
