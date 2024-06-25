@@ -1,5 +1,4 @@
 import { IRangeOrPeriod, IRange, IPeriod } from 'types'
-import { log } from 'console'
 
 export function rangeIsPeriod(
   rangeOrPeriod: IRangeOrPeriod
